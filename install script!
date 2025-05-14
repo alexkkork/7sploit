@@ -1,0 +1,38 @@
+#!/bin/bash
+
+APP_NAME="7sploit.app"
+ZIP_URL="https://github.com/alexkkork/7sploit/raw/refs/heads/main/7sploit.zip"
+ZIP_FILE="/tmp/7sploit.zip"
+INSTALL_DIR="/Applications"
+
+echo "📦 Installing 7Sploit from GitHub..."
+
+# Check for curl & unzip
+command -v curl >/dev/null 2>&1 || { echo >&2 "❌ curl is required but not installed."; exit 1; }
+command -v unzip >/dev/null 2>&1 || { echo >&2 "❌ unzip is required but not installed."; exit 1; }
+
+# Download the zip
+echo "🌐 Downloading 7sploit.zip..."
+if ! curl -L "$ZIP_URL" --output "$ZIP_FILE"; then
+    echo "❌ Failed to download from GitHub."
+    exit 1
+fi
+
+# Remove old app if exists
+if [ -d "$INSTALL_DIR/$APP_NAME" ]; then
+    echo "🗑️ Removing previous version..."
+    rm -rf "$INSTALL_DIR/$APP_NAME"
+fi
+
+# Unzip to Applications
+echo "🗂️ Installing to $INSTALL_DIR..."
+if ! unzip -q "$ZIP_FILE" -d "$INSTALL_DIR"; then
+    echo "❌ Failed to unzip archive."
+    exit 1
+fi
+
+# Set permissions
+chmod -R 755 "$INSTALL_DIR/$APP_NAME"
+
+echo "✅ 7Sploit installed at: $INSTALL_DIR/$APP_NAME"
+exit 0
